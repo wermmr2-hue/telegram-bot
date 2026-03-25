@@ -109,13 +109,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 import asyncio
 
 if __name__ == "__main__":
-    async def main():
-        app = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(TOKEN).build()
 
-        app.add_handler(CommandHandler("start", start))
-        app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        print("Бот успешно запущен!")
-        await app.run_polling()
+    print("Бот успешно запущен!")
 
-    asyncio.run(main())
+    try:
+        app.run_polling()
+    except RuntimeError:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(app.run_polling())
